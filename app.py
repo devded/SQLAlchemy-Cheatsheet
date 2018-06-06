@@ -51,6 +51,12 @@ def add_new_user(username, password, email):
 	db.session.add(new_user) # add new user to the session
 	db.session.commit()      # commit the session. Save to MySQL.
 
+
+def delete_user(member_username):
+	current_user = Member.query.filter(Member.username == member_username).first()
+	db.session.delete(current_user)
+	db.session.commit()
+	
 	
 
 # add an order to the order table with a relationship to a member (one to many)
