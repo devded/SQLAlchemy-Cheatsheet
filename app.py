@@ -103,23 +103,17 @@ def get_list_of_member():
     results = Member.query.all()
     # list them (for demonstration)
     for user in results:
-        print(user.username + ':' + user.email + ' email: ' + user.email)
+        print(f'{user.username}:{user.email} email: {user.email}')
 
     return results
 
 
 def get_specific_member_informations(member_username):
-    # get the row of a specific member with the unique username.
-    current_user = Member.query.filter(Member.username == member_username).first()
-
-    return current_user
+    return Member.query.filter(Member.username == member_username).first()
 
 
 def get_specific_member_informations_by_id(id):
-    # get the row of a specific member with the unique id.
-    current_user = Member.query.filter(Member.id == id).first()
-
-    return current_user
+    return Member.query.filter(Member.id == id).first()
 
 
 def change_password(username, new_password):
@@ -134,16 +128,11 @@ def change_password(username, new_password):
 
 
 def query_all_member_with_NULL_email():
-    # query all members who dont have an email.
-    q = Member.query.filter(Member.email == None).all()
-    return q
+    return Member.query.filter(Member.email is None).all()
 
 
 def query_all_member_with_email():
-    # query all members who have an email.
-
-    q = Member.query.filter(Member.email != None).all()  # normal filter
-    return q
+    return Member.query.filter(Member.email != None).all()
 
 
 def query_stacking_filter():
@@ -162,55 +151,51 @@ def query_stacking_filter():
 
 
 def query_AND_1():
-    # using AND in a query, notice the the .filter() connected to another .filter().
-    q = Member.query.filter(filter(Member.username == 'Jordan').filter(Member.password == 'Password')).first()
-    return q
+    return Member.query.filter(
+        filter(Member.username == 'Jordan').filter(
+            Member.password == 'Password'
+        )
+    ).first()
 
 
 def query_AND_2():
-    # using AND in a query, notice the "db.and_" inside the filter bracket.
-    q = Member.query.filter(db.and_(Member.username == 'Jordan', Member.email != None, Member.join_date != None)).all()
-    return q
+    return Member.query.filter(
+        db.and_(
+            Member.username == 'Jordan',
+            Member.email != None,
+            Member.join_date != None,
+        )
+    ).all()
 
 
 def query_OR():  # using OR  in a query
-    # using OR in a query, notice the "db.and_" inside the filter bracket.
-    q = Member.query.filter(db.or_(Member.username != None, Member.email != None)).all()
-    return q
+    return Member.query.filter(
+        db.or_(Member.username != None, Member.email != None)
+    ).all()
 
 
 def query_LIMIT():  # impose a limit of row returned
-    # Member.query.all() #no limit
-    q = Member.query.limit(2).all()  # limit of 2
-    return q
+    return Member.query.limit(2).all()
 
 
 def query_OFFSET():
-    # Skip the first X number of row(s)
-    q = Member.query.offset(100).all()  # skip the first 100 member of the query
-    return q
+    return Member.query.offset(100).all()
 
 
 def query_COUNT_1():
-    # Count number of row inside the table/ with or without filter(s)
-    q = Member.query.count()  # count all the members. Ofc count() can be used on many filters.
-    return q
+    return Member.query.count()
 
 
 def query_COUNT_2():  # Count number of row inside the table/ with or without filter(s)
-    q = Member.query.filter(Member.email != Null).count()  # count all the members who have email registered
-    return q
+    return Member.query.filter(Member.email != Null).count()
 
 
 def query_inequality():  # filter the 1000 first members.
-    q = Member.query.filter(Member.id <= 1000)
-    return q
+    return Member.query.filter(Member.id <= 1000)
 
 
 def list_all_orders_of_a_member(current_member):
-    # THE MAGIC IS HAPPENING HERE: The orders are "included" with the member(s) by SQLAlchemy
-    q = current_member.orders.all()
-    return q
+    return current_member.orders.all()
 
 
 
@@ -235,7 +220,7 @@ def demo():
 
     print('List of orders:')  # exemple of using a relationship, listing all the order attached to a specific user.
     for order in current_member.orders:
-        print('ID:' + str(order.id) + ' Price: ' + str(order.price))  # print out information each single order. (id/price)
+        print(f'ID:{str(order.id)} Price: {str(order.price)}')
 
     # Relation exemple number 2. (one query instead instead of many queries)
 
@@ -245,12 +230,15 @@ def demo():
 
         #  for each member, display the name + total number of orders.
         print('--------------------------------------------------------------')  # separator for every user
-        print('Member username: ' + current_member.username + " Total order(s): " + str(current_member.orders.count()))
+        print(
+            f'Member username: {current_member.username} Total order(s): {str(current_member.orders.count())}'
+        )
+
         if current_member.orders:  # if user have order(s), print the out.
             print('List of orders: ')
             for order in current_member.orders:
                 #  for each order, print out the unique id and price)
-                print('ID:' + str(order.id) + ' Price: ' + str(order.price))  # print out information each single order. (id/price)
+                print(f'ID:{str(order.id)} Price: {str(order.price)}')
 
 
 
@@ -282,14 +270,17 @@ def demo():
     for member in all_members:
         print(member.username)
 
-        print('Member username: ' + current_member.username + " Total order(s): " + str(member.orders.count()))
+        print(
+            f'Member username: {current_member.username} Total order(s): {str(member.orders.count())}'
+        )
+
 
         if current_member.orders:  # if user have order(s), print the out.
             #  for each order, print out the unique id and price)
 
-            for order in  member.orders:
+            for order in member.orders:
                 print(order.id)
-                print('ID:' + str(order.id) + ' Price: ' + str(order.price))  # print out information each single order. (id/price)
+                print(f'ID:{str(order.id)} Price: {str(order.price)}')
 
 
 
